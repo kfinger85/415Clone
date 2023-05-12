@@ -1,0 +1,9 @@
+Specification of Business Logic Classes and Operations
+
+" The operation specifications are listed for each class as follows. If during the development 
+ of test cases you feel that some specifications are missing, feel free to make up your own and 
+ note them in an overview document that you will submit as overview.txt. "
+
+
+Missing specifications:
+
