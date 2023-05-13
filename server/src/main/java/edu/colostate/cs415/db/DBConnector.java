@@ -3,6 +3,16 @@ package edu.colostate.cs415.db;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.HashSet;
+
+
+
 import edu.colostate.cs415.model.Company;
 import edu.colostate.cs415.model.Project;
 import edu.colostate.cs415.model.ProjectSize;
@@ -10,6 +20,10 @@ import edu.colostate.cs415.model.Qualification;
 import edu.colostate.cs415.model.Worker;
 
 public class DBConnector {
+
+        private static final String JDBC_URL = "jdbc:mysql://localhost:3306/415Db";
+        private static final String USERNAME = "root";
+        private static final String PASSWORD = "(Ntlsec59!)";
 
         public static void main(String[] args) {
                 DBConnector dbConnector = new DBConnector();
@@ -34,8 +48,110 @@ public class DBConnector {
                 for (Project project : company.getProjects()) {
                         System.out.println(project);
                 }
-        }
 
+                try{
+									Class.forName("com.mysql.cj.jdbc.Driver");
+      
+									Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
+
+									// Create a statement object for executing SQL queries
+                        Statement statement = connection.createStatement();
+            
+                        // Truncate existing tables (optional)
+                        // truncateTables(statement);
+            
+                        // Insert company, qualifications, workers, and projects into the database
+                        insertCompanyData(statement, company);
+            
+                        // Retrieve and display data from the database (optional)
+                        retrieveData(statement);
+            
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }catch (ClassNotFoundException e) {
+												e.printStackTrace();
+										}
+        }
+        private void truncateTables(Statement statement) throws SQLException {
+                // Truncate tables or perform any necessary cleanup before inserting data
+                statement.executeUpdate("TRUNCATE TABLE company");
+                statement.executeUpdate("TRUNCATE TABLE qualifications");
+                statement.executeUpdate("TRUNCATE TABLE workers");
+                statement.executeUpdate("TRUNCATE TABLE projects");
+                statement.executeUpdate("TRUNCATE TABLE project_qualification");
+                statement.executeUpdate("TRUNCATE TABLE worker_project");
+            }
+
+        private void insertCompanyData(Statement statement, Company company) throws SQLException {
+                // Insert the company
+                String insertCompanySql = "INSERT INTO company (name) VALUES ('" + company.getName() + "')";
+                statement.executeUpdate(insertCompanySql);
+            
+                // Insert qualifications
+                for (Qualification qualification : company.getQualifications()) {
+                    String insertQualificationSql = "INSERT INTO qualifications (name) VALUES ('" + qualification.getDescription() + "')";
+                    statement.executeUpdate(insertQualificationSql);
+                }
+            
+                // Insert workers
+                for (Worker worker : company.getEmployedWorkers()) {
+                    String insertWorkerSql = "INSERT INTO workers (name, workload) VALUES ('" + worker.getName() + "', " + worker.getWorkload() + ")";
+                    statement.executeUpdate(insertWorkerSql);
+                }
+            
+                // Insert projects
+                for (Project project : company.getProjects()) {
+                    String insertProjectSql = "INSERT INTO projects (name, size) VALUES ('" + project.getName() + "', '" + project.getSize() + "')";
+                    statement.executeUpdate(insertProjectSql);
+            
+                    // Assign qualifications to projects
+                    for (Qualification qualification : project.getRequiredQualifications()) {
+                        String assignQualificationSql = "INSERT INTO project_qualification (project_id, qualification_id) SELECT "
+                                + "(SELECT id FROM projects WHERE name = '" + project.getName() + "'), "
+                                + "(SELECT id FROM qualifications WHERE name = '" + qualification.getDescription() + "')";
+                        statement.executeUpdate(assignQualificationSql);
+                    }
+            
+                    // Assign workers to projects
+                    for (Worker worker : project.getWorkers()) {
+                        String assignWorkerSql = "INSERT INTO worker_project (worker_id, project_id) SELECT "
+                                + "(SELECT id FROM workers WHERE name = '" + worker.getName() + "'), "
+                                + "(SELECT id FROM projects WHERE name = '" + project.getName() + "')";
+                        statement.executeUpdate(assignWorkerSql);
+                    }
+                }
+            }
+            
+		private void retrieveData(Statement statement) throws SQLException {
+			// Retrieve and display qualifications
+			String qualificationsSql = "SELECT * FROM qualifications";
+			ResultSet qualificationsResult = statement.executeQuery(qualificationsSql);
+			System.out.println("\nQualifications:");
+			while (qualificationsResult.next()) {
+							String qualificationName = qualificationsResult.getString("name");
+							System.out.println(qualificationName);
+			}
+			
+			// Retrieve and display workers
+			String workersSql = "SELECT * FROM workers";
+			ResultSet workersResult = statement.executeQuery(workersSql);
+			System.out.println("\nWorkers:");
+			while (workersResult.next()) {
+							String workerName = workersResult.getString("name");
+							double workload = workersResult.getDouble("workload");
+							System.out.println(workerName + ": " + workload);
+			}
+			
+			// Retrieve and display projects
+			String projectsSql = "SELECT * FROM projects";
+			ResultSet projectsResult = statement.executeQuery(projectsSql);
+			System.out.println("\nProjects:");
+			while (projectsResult.next()) {
+							String projectName = projectsResult.getString("name");
+							String projectSize = projectsResult.getString("size");
+							System.out.println(projectName + " (" + projectSize + ")");
+			}
+		}
         public Company loadCompanyData() {
                 // Company
                 Company company = new Company("CS415Startup");
