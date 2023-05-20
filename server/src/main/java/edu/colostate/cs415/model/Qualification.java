@@ -4,12 +4,35 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import edu.colostate.cs415.dto.QualificationDTO;
 
+import edu.colostate.cs415.dto.QualificationDTO;
+import javax.persistence.*;
+
+@Entity
+@Table(name = "qualifications")
 public class Qualification {
 
-	private String description;
-	private Set<Worker> workers;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+
+    @Column(name = "name")
+    private String description;
+
+    @ManyToMany(mappedBy = "qualifications")
+    private Set<Project> projects = new HashSet<>();
+
+
+    @ManyToMany(mappedBy = "qualifications")
+	private Set<Worker> workers = new HashSet<>();
+
+	@ManyToMany(mappedBy = "qualifications")
+	private Set<Company> companies;
+
+    protected Qualification() {}
+
 
 
   public Qualification(String description) { 
@@ -19,11 +42,26 @@ public class Qualification {
 		workers = new HashSet<Worker>();
 		this.description = description;
 	}
+	
+	public String getDescription() {
+		return description;
+	}
+	public Long getId() {
+		return id;
+	}
+
+	public void setDescription(String description) {
+		if(description == null || description.isEmpty() || isAllBlankSpace(description)){
+			throw new IllegalArgumentException("description must not be null or empty");
+		}
+		this.description = description;
+	}
 
 	private boolean isAllBlankSpace(String description) {
 		Pattern pattern = Pattern.compile("^\\s*$");
 		return pattern.matcher(description).find();
 	}
+
 
 	
 

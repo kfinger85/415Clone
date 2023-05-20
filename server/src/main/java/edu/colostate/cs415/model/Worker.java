@@ -5,15 +5,46 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import edu.colostate.cs415.dto.WorkerDTO;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "workers")
 public class Worker {
 
 	public static final int MAX_WORKLOAD = 12;
 
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(name = "name")
 	private String name;
+
+	@Column(name = "salary")
 	private double salary;
+
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+        name = "workers_projects", 
+        joinColumns = { @JoinColumn(name = "worker_id") }, 
+        inverseJoinColumns = { @JoinColumn(name = "project_id") }
+    )
 	private Set<Project> projects;
+
+    @ManyToMany
+    @JoinTable(
+        name = "workers_qualifications",
+        joinColumns = @JoinColumn(name = "worker_id"),
+        inverseJoinColumns = @JoinColumn(name = "qualification_id")
+    )
 	private Set<Qualification> qualifications;
 
+    @ManyToOne
+    @JoinColumn(name = "company")
+    private Company company;
+
+	protected Worker() {}
 
 	public Worker(String name, Set<Qualification> qualifications, double salary) {
 		checkArgValidity(name, qualifications, salary);
@@ -21,6 +52,10 @@ public class Worker {
 		this.qualifications = qualifications;
 		this.salary = salary;
 		this.projects = new HashSet<Project>();
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	private void checkArgValidity(String name, Set<Qualification> qualifications, double salary){
@@ -50,6 +85,10 @@ public class Worker {
 		}
 		return this.getName().equals(((Worker) other).getName());
 	}
+
+	public void setCompany(Company company) {
+        this.company = company;
+    }
 
 	@Override
 	public int hashCode() {
