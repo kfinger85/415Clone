@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "/usr/share/java/mysql-connector-java-8.0.33.jar"
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic"
+}
