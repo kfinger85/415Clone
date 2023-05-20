@@ -4,7 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "type": "java",
+            "name": "CS415Application",
+            "request": "launch",
+            "mainClass": "edu.colostate.cs415.server.CS415Application",
+            "projectName": "company_management"
+        },
         {
             "type": "java",
             "name": "Current File",
@@ -23,7 +29,8 @@
             "name": "DBConnector",
             "request": "launch",
             "mainClass": "edu.colostate.cs415.db.DBConnector",
-            "projectName": "company_management"
+            "projectName": "company_management",
+            "vmArgs": "-cp ${workspaceFolder}/server/resources:${workspaceFolder}/server/target/classes:${workspaceFolder}/server/target/lib/*"
         },
         {
             "type": "chrome",
@@ -32,6 +39,8 @@
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}"
         }
+    ]
+    
         
         
 }
