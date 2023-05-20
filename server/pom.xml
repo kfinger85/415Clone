@@ -7,30 +7,31 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>company_management</name>
 	<url>https://github.com/CSU-CS-CS415-Spring2023</url>
+	<parent>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-parent</artifactId>
+    	<version>2.6.3</version>
+    	<relativePath/>
+	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 	<dependencies>
+	<dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>evosuite</groupId>
-			<artifactId>evosuite</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/tools/evosuite-1.0.6.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.openclover</groupId>
-			<artifactId>clover-maven-plugin</artifactId>
-			<version>4.4.1</version>
-			<type>maven-plugin</type>
 		</dependency>
 		<dependency>
 			<groupId>com.sparkjava</groupId>
@@ -47,33 +48,36 @@
 			<artifactId>gson</artifactId>
 			<version>2.10.1</version>
 		</dependency>
-		<dependency>
-    		<groupId>pl.pragmatists</groupId>
-    		<artifactId>JUnitParams</artifactId>
-    		<version>1.0.6</version>
-   		    <scope>test</scope>
-	</dependency>
-		<dependency>
-		<groupId>org.mockito</groupId>
-		<artifactId>mockito-core</artifactId>
-		<version>4.11.0</version>
-		<scope>test</scope>
-	</dependency>
 	  <dependency>
     <groupId>mysql</groupId>
     <artifactId>mysql-connector-java</artifactId>
     <version>8.0.33</version>
   </dependency>
-	
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>5.6.3.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>5.6.3.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.33</version>
+    </dependency>
+	<dependency>
+		<groupId>pl.pragmatists</groupId>
+		<artifactId>JUnitParams</artifactId>
+		<version>1.0.6</version>
+		<scope>test</scope>
+	</dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>com.github.spotbugs</groupId>
-					<artifactId>spotbugs-maven-plugin</artifactId>
-					<version>4.7.2.1</version>
-				</plugin>
 				<plugin>
 					<artifactId>maven-clean-plugin</artifactId>
 					<version>3.1.0</version>
@@ -130,56 +134,34 @@
 						</arguments>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.pitest</groupId>
-					<artifactId>pitest-maven</artifactId>
-					<version>1.10.4</version>
-					<configuration>
-					    <targetClasses>
-							<param>edu.colostate.cs415.model.*</param>
-						</targetClasses>
-						<targetTests>
-							<param>edu.colostate.cs415.model.*</param>
-						</targetTests>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.13.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.ekstazi</groupId>
-					<artifactId>ekstazi-maven-plugin</artifactId>
-					<version>5.3.0</version>
-					<executions>
-						<execution>
-							<id>ekstazi</id>
-							<goals>
-								<goal>select</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.8</version>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+					<configuration>
+					<executable>true</executable>
+					<mainClass>edu.colostate.cs415.server.CS415Application</mainClass>
+					</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.2</version>
 				<executions>
 					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
 						<goals>
-							<goal>prepare-agent</goal>
+							<goal>copy-dependencies</goal>
 						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
