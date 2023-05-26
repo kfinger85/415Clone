@@ -1,7 +1,10 @@
 package edu.colostate.cs415.controllers;
 
 import edu.colostate.cs415.services.QualificationService;
+import edu.colostate.cs415.dto.QualificationDTO;
 import edu.colostate.cs415.model.Qualification;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,14 +16,17 @@ public class QualificationController {
 
     private final QualificationService qualificationService;
 
+    @GetMapping
+    public ResponseEntity<List<QualificationDTO>> getAllProjects() {
+        List<QualificationDTO> projects = (qualificationService.getAllProjects());
+        return new ResponseEntity<>(projects, HttpStatus.OK);
+    }
+
     public QualificationController(QualificationService qualificationService) {
         this.qualificationService = qualificationService;
     }
 
-    @GetMapping("")
-    public List<Qualification> getAllQualifications() {
-        return qualificationService.getAllQualifications();
-    }
+
 
     @GetMapping("/{id}")
     public Qualification getQualificationById(@PathVariable Long id) {
