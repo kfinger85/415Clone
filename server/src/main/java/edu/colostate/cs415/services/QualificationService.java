@@ -3,11 +3,13 @@ package edu.colostate.cs415.services;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.colostate.cs415.dto.QualificationDTO;
 import edu.colostate.cs415.model.Qualification;
 import edu.colostate.cs415.model.Worker;
 
@@ -29,11 +31,19 @@ public class QualificationService {
                 .orElseThrow(() -> new RuntimeException("Qualification not found"));
     }
 
+
+    public List<QualificationDTO> getAllProjects() {
+        List<QualificationDTO> qualifications = qualificationRepository.findAll().stream()
+                                                   .map(Qualification::toDTO)
+                                                   .collect(Collectors.toList());
+        return qualifications;
+    }
+    
     @Transactional
     public ResponseEntity<Qualification> updateQualificationDescription(Long qualificationId, String newDescription) {
         Qualification qualification = qualificationRepository.findById(qualificationId)
                 .orElseThrow(() -> new RuntimeException("Qualification not found"));
-        qualification.setDescription(newDescription);
+        qualification.setName(newDescription);
         qualificationRepository.save(qualification);
         return ResponseEntity.ok(qualification);
     }
@@ -77,14 +87,11 @@ public class QualificationService {
         qualificationRepository.deleteById(qualificationId);
         return ResponseEntity.ok().build();
     }
-
+    
     @Transactional(readOnly = true)
     public List<Qualification> getAllQualifications() {
         return qualificationRepository.findAll();
     }
-
-
-
 
 }
 
