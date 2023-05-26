@@ -15,7 +15,7 @@
             "type": "java",
             "name": "Spring Boot Application",
             "request": "launch",
-            "mainClass": "edu.colostate.cs415.server.CS415Application",
+            "mainClass": "edu.colostate.cs415.CS415Application",
             "args": ""
         },
         {
