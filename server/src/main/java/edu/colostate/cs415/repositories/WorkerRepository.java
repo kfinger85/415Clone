@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WorkerRepository extends JpaRepository<Worker, Long> {
     public Worker findByName(String name);
+
+    public Worker findByUsername(String username);
 }
 
 
