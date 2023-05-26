@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const SERVER_ADDRESS = "http://localhost:4567/api/";
+const SERVER_ADDRESS = "http://localhost:8080/";
+
 
 export function getQualification(name) {
   return axios
@@ -73,26 +74,46 @@ export function createProject(name, qualifications, size) {
 }
 
 export function assignWorkerToProject(workerName, projectName) {
-  return axios.put(SERVER_ADDRESS + "assign", {
+  return axios.put(SERVER_ADDRESS + "projects/assign", {
     worker: workerName,
     project: projectName,
   });
 }
 
 export function unassignWorkerFromProject(workerName, projectName) {
-  return axios.put(SERVER_ADDRESS + "unassign", {
+  return axios.put(SERVER_ADDRESS + "projects/unassign", {
     worker: workerName,
     project: projectName,
   });
 }
 
   export function startProject(projectName) {
-    return axios.put(SERVER_ADDRESS + 'start', {
+    return axios.put(SERVER_ADDRESS + 'projects/start', {
       name: projectName,
     });
   }
   export function finishProject(projectName) {
-    return axios.put(SERVER_ADDRESS + 'finish', {
+    return axios.put(SERVER_ADDRESS + 'projects/finish', {
       name: projectName,
     });
   }
+
+  export function deleteProject(projectName) {
+    return axios.put(SERVER_ADDRESS + 'projects/delete', {
+      name: projectName,
+    });
+  }
+
+  export function login(username, password) {
+    return axios.post(SERVER_ADDRESS + "login", {
+        username,
+        password
+    }).then(res => {
+        if (res.status === 200) {
+            return res.data; // If successful, return the user data
+        } else {
+            throw new Error(res.data); // If unsuccessful, throw an error with the server's response
+        }
+    });
+}
+
