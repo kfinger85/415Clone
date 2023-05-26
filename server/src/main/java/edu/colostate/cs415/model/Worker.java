@@ -3,9 +3,13 @@ package edu.colostate.cs415.model;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import edu.colostate.cs415.dto.WorkerDTO;
 
+
 import javax.persistence.*;
+
 
 @Entity
 @Table(name = "workers")
@@ -24,13 +28,23 @@ public class Worker {
 	@Column(name = "salary")
 	private double salary;
 
+	@Column(name = "username", unique = true)
+    private String username;
+
+    @Column(name = "password")
+    private String password;
+
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
         name = "workers_projects", 
         joinColumns = { @JoinColumn(name = "worker_id") }, 
         inverseJoinColumns = { @JoinColumn(name = "project_id") }
+		
     )
 	private Set<Project> projects;
+
+	@OneToMany(mappedBy = "worker")
+private Set<WorkerProject> workerProjects;
 
     @ManyToMany
     @JoinTable(
@@ -52,6 +66,7 @@ public class Worker {
 		this.qualifications = qualifications;
 		this.salary = salary;
 		this.projects = new HashSet<Project>();
+		this.workerProjects = new HashSet<>();
 	}
 
 	public Long getId() {
@@ -108,6 +123,19 @@ public class Worker {
 		return this.salary;
 	}
 
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getUsername() {
+		return this.username;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public String getPassword() {
+		return this.password;
+	}
+
 	public void setSalary(double salary) {
 		if(salary < 0){
 			throw new IllegalArgumentException("Salary cannot be negative");
@@ -127,38 +155,46 @@ public class Worker {
 	}
 
 	public Set<Project> getProjects() {
-		return new HashSet<Project>(this.projects);
-	}
+        return workerProjects.stream()
+            .map(WorkerProject::getProject)
+            .collect(Collectors.toSet());
+    }
 
-	public void addProject(Project project) {
-		if(project == null) {
-			throw new IllegalArgumentException("project must not be null");
-		}
-		this.projects.add(project);
-	}
+    public void addProject(Project project) {
+        if(project == null) {
+            throw new IllegalArgumentException("project must not be null");
+        }
+        WorkerProject workerProject = new WorkerProject(this, project);
+        this.workerProjects.add(workerProject);
+    }
 
-	public void removeProject(Project project) {
-		if(project == null) {
-			throw new IllegalArgumentException("project must not be null");
-		}
-		this.projects.remove(project);
-	}
+    public void removeProject(Project project) {
+        if (project == null) {
+            throw new IllegalArgumentException("project must not be null");
+        }
+        WorkerProject workerProject = this.workerProjects.stream()
+            .filter(wp -> wp.getProject().equals(project))
+            .findFirst()
+            .orElse(null);
+        if (workerProject != null) {
+            this.workerProjects.remove(workerProject);
+        }
+    }
 
 	public int getWorkload() {
 		int workload = 0;
 
-		for (Project p : this.projects) {
-			
+		for (WorkerProject wp : this.workerProjects) {
+			Project p = wp.getProject();
 			if(p.getStatus() == ProjectStatus.FINISHED) continue;
 			workload += p.getSize().getValue();
-
 		}
 
 		return workload;
 	}
 
 	public boolean willOverload(Project project) {
-		if(this.projects.contains(project)) return false;
+		if(this.getProjects().contains(project)) return false;
 
 		int workload_with_project = this.getWorkload() + project.getSize().getValue();
 		if(workload_with_project > MAX_WORKLOAD) return true; 
@@ -189,5 +225,10 @@ public class Worker {
 
 		return new WorkerDTO(this.name, this.salary, this.getWorkload(), project_strings, qualification_strings);
 	}
+
+	public Worker orElseThrow(Object object) {
+		return null;
+	}
+
 	
 }
