@@ -31,8 +31,6 @@ public class CompanyService {
     @Autowired
     private QualificationRepository qualificationRepository;
 
-    @Autowired
-    private QualificationService qualificationService;
 
     @Autowired
     public CompanyService(CompanyRepository companyRepository,
