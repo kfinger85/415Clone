@@ -74,6 +74,33 @@
 		<version>1.0.6</version>
 		<scope>test</scope>
 	</dependency>
+	    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <!-- Spring Security Test (optional, for testing) -->
+    <dependency>
+        <groupId>org.springframework.security</groupId>
+        <artifactId>spring-security-test</artifactId>
+        <scope>test</scope>
+    </dependency>
+	<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.11.2</version>
+	</dependency>
+	<dependency>
+		<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.2</version>
+		<scope>runtime</scope>
+	</dependency>
+	<dependency>
+		<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId> 
+			<version>0.11.2</version> 
+		<scope>runtime</scope>
+	</dependency>
 	</dependencies>
 	<build>
 		<pluginManagement>
@@ -142,7 +169,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 					<configuration>
 					<executable>true</executable>
-					<mainClass>edu.colostate.cs415.server.CS415Application</mainClass>
+					<mainClass>edu.colostate.cs415.CS415Application</mainClass>
 					</configuration>
 			</plugin>
 			<plugin>
