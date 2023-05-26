@@ -30,7 +30,6 @@ import edu.colostate.cs415.model.Company;
 import edu.colostate.cs415.model.Project;
 import edu.colostate.cs415.model.Qualification;
 import edu.colostate.cs415.model.Worker;
-// import edu.colostate.cs415.model.Worker;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
