@@ -19,7 +19,7 @@ public class Qualification {
 
 
     @Column(name = "name")
-    private String description;
+    private String name;
 
     @ManyToMany(mappedBy = "qualifications")
     private Set<Project> projects = new HashSet<>();
@@ -40,21 +40,21 @@ public class Qualification {
 		throw new IllegalArgumentException("description must not be null or empty");
 	}
 		workers = new HashSet<Worker>();
-		this.description = description;
+		this.name = description;
 	}
 	
-	public String getDescription() {
-		return description;
+	public String getName() {
+		return name;
 	}
 	public Long getId() {
 		return id;
 	}
 
-	public void setDescription(String description) {
+	public void setName(String description) {
 		if(description == null || description.isEmpty() || isAllBlankSpace(description)){
 			throw new IllegalArgumentException("description must not be null or empty");
 		}
-		this.description = description;
+		this.name = description;
 	}
 
 	private boolean isAllBlankSpace(String description) {
@@ -74,17 +74,17 @@ public class Qualification {
 			return false;
 		}
 		Qualification q = (Qualification) other;
-		return q.description.equals(this.description);
+		return q.name.equals(this.name);
 	}
 
 	@Override
 	public int hashCode() {
-		return description.hashCode();
+		return name.hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return description;
+		return name;
 	}
 
 	public Set<Worker> getWorkers() {
@@ -108,7 +108,7 @@ public class Qualification {
 	// look at using Java streams 
 	public QualificationDTO toDTO() {
 		return new QualificationDTO(
-				this.description,
+				this.name,
 				this.workers.stream()
 				.map(
 				    worker -> worker.getName())
