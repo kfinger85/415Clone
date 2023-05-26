@@ -19,6 +19,8 @@ public class Company {
     @Column(name = "name")
     private String name;
 
+
+
 	@OneToMany(mappedBy = "company")
     private Set<Worker> workers = new HashSet<>();
 	
@@ -60,6 +62,9 @@ public class Company {
 		this.assigned = new HashSet<Worker>();
 		this.projects = new HashSet<Project>();
 		this.qualifications = new HashSet<Qualification>();
+	}
+	public static Company getCompany(String name) {
+		return new Company(name);
 	}
 
 	private boolean isAllBlankSpace(String name) {
