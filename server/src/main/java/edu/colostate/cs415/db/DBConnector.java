@@ -1,58 +1,51 @@
 package edu.colostate.cs415.db;
 
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-
-
 import edu.colostate.cs415.model.Company;
 import edu.colostate.cs415.model.Project;
 import edu.colostate.cs415.model.Qualification;
 import edu.colostate.cs415.model.Worker;
+import edu.colostate.cs415.model.WorkerProject;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+import org.springframework.stereotype.Service;
 import org.hibernate.Transaction;
 
-import org.springframework.stereotype.Service;
+
+
 
 @Service
 public class DBConnector {
-
-
-
 private SessionFactory sessionFactory;
-private static final String JDBC_URL = "jdbc:mysql://localhost:3306/415Db";
-private static final String USERNAME = "root";
-private static final String PASSWORD = "(Ntlsec59!)";
-private static final String HIBERNATE_DIALECT = "org.hibernate.dialect.MySQL8Dialect";
-private static final String HIBERNATE_HBM2DDL_AUTO = "create";
 
 public DBConnector() {
-// Create the Hibernate SessionFactory
        // Create the Hibernate SessionFactory
        Configuration configuration = new Configuration();
-
-       // Set the necessary properties
-        configuration.setProperty("hibernate.dialect", HIBERNATE_DIALECT);
-        configuration.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
-        configuration.setProperty("hibernate.connection.url", JDBC_URL);
-        configuration.setProperty("hibernate.connection.username", USERNAME);
-        configuration.setProperty("hibernate.connection.password", PASSWORD);
-        configuration.setProperty("hibernate.hbm2ddl.auto", HIBERNATE_HBM2DDL_AUTO);
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(System.getProperty("user.dir") + "/server/src/main/resources/application.properties"));
+            configuration.setProperties(properties);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         configuration.addAnnotatedClass(Qualification.class);
         configuration.addAnnotatedClass(Worker.class);
         configuration.addAnnotatedClass(Project.class);
         configuration.addAnnotatedClass(Company.class);
+        configuration.addAnnotatedClass(WorkerProject.class);
 
        // Apply the configuration
-       ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
-       sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+       ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+       .applySettings(configuration.getProperties()).build();
+
+        sessionFactory = configuration.buildSessionFactory(serviceRegistry);
    }
         public static void main(String[] args) {
                 DBConnector dbConnector = new DBConnector();
@@ -61,16 +54,11 @@ public DBConnector() {
         }
 
         public Company loadCompanyData() {
-
-                // Company
                 Session session = sessionFactory.openSession();
-
                 Company company = new Company("CS415Startup");
-
-                company.createQualification("Testing"); 
-
+                CompanyInitializer companyInitializer = new CompanyInitializer(company);
+                companyInitializer.initialize();
                 insertCompanyData(session, company);
-
                 return company;
         }
 
@@ -79,7 +67,7 @@ public DBConnector() {
 
                 System.out.println("\nQualifications:");
                 for (Qualification qualification : company.getQualifications()) {
-                        System.out.println(qualification.getDescription());
+                        System.out.println(qualification.getName());
                 }
 
                 System.out.println("\nWorkers:");
