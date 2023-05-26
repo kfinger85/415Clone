@@ -14,7 +14,7 @@ public class Project {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
 	@Column(name = "name")
 	private String name;
@@ -27,7 +27,7 @@ public class Project {
 	@Enumerated(EnumType.STRING)
 	private ProjectStatus status;
 
-	@ManyToMany(mappedBy = "projects")
+	@ManyToMany(mappedBy = "projects", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
 	private Set<Worker> workers = new HashSet<>();
 
 	@ManyToMany
@@ -38,8 +38,14 @@ public class Project {
 	@JoinColumn(name = "company_id")
 	private Company company;
 
+	@OneToMany(mappedBy = "project")
+	private Set<WorkerProject> workerProjects;
+
 	public Project() {
 		// Default constructor required by Hibernate
+	}
+	public Company getCompany() {
+		return company;
 	}
 
 	public void setCompany(Company company) {
@@ -62,6 +68,11 @@ public class Project {
 		status = ProjectStatus.PLANNED;
 		workers = new HashSet<Worker>();
 	}
+
+	       public Long getId() {
+			 return id;
+		   }
+
 		 public void setName(String name) {
 			 this.name = name;
 		 }
@@ -216,4 +227,9 @@ public class Project {
 								missingQ -> missingQ.toDTO().getDescription())
 						.toArray(String[]::new));
 	}
+
+    public Project orElseThrow(Object object) {
+        return null;
+    }
+
 }
