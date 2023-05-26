@@ -1,10 +1,19 @@
 package edu.colostate.cs415.db;
 
 import edu.colostate.cs415.model.*;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+
+
 public class CompanyInitializer {
+
+        private BCryptPasswordEncoder passwordEncoder;
+
+
 
     private final Company company;
     // Declare the qualifications as instance variables
@@ -22,6 +31,7 @@ public class CompanyInitializer {
     private Qualification typeScript;
 
     // Declare the workers as instance variables
+    private Worker kevinFinger;
     private Worker geneRobertson;
     private Worker terryHampton;
     private Worker ninaBanks;
@@ -49,9 +59,16 @@ public class CompanyInitializer {
     private Project ecommerceFakeProductReviewsDetectionSystem;
     private Project employeesDB;
 
+
+
+
+
+
     public CompanyInitializer(Company company) {
         this.company = company;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
+
 
     public void initialize() {
         createQualifications();
@@ -128,43 +145,84 @@ public class CompanyInitializer {
     
     private void createWorkers() {
         // Create the workers and assign them to the instance variables
+
+        kevinFinger = company.createWorker("Kevin Finger",
+                new HashSet<>(Arrays.asList(java, javaScript, spring, sql)), 150000.0);
+        kevinFinger.setCompany(company);
+        kevinFinger.setUsername("kfinger");
+        kevinFinger.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
+
         geneRobertson = company.createWorker("Gene Robertson",
                 new HashSet<>(Arrays.asList(python, tensorflow)), 100000.0);
         geneRobertson.setCompany(company);
+        geneRobertson.setUsername("grobertson");
+        geneRobertson.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
     
         terryHampton = company.createWorker("Terry Hampton",
                 new HashSet<>(Arrays.asList(java, python, spring)), 120000.0);
-    
+        terryHampton.setCompany(company);
+        terryHampton.setUsername("thampton");
+        terryHampton.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
+
         ninaBanks = company.createWorker("Nina Banks",
                 new HashSet<>(Arrays.asList(angular, typeScript)), 180000.0);
+        ninaBanks.setCompany(company);
+        ninaBanks.setUsername("nbanks");
+        ninaBanks.setPassword(passwordEncoder.encode("12345678"));
+
+        benjaminGuzman = company.createWorker("Benjamin Guzman",
+                new HashSet<>(Arrays.asList(java, spring, sql)), 150000.0);
+        benjaminGuzman.setCompany(company);
+        benjaminGuzman.setUsername("bguzman");
+        benjaminGuzman.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
+
+        marcusSchneider = company.createWorker("Marcus Schneider",
+                new HashSet<>(Arrays.asList(javaScript, typeScript)), 145000.0);
+        marcusSchneider.setCompany(company);
+        marcusSchneider.setUsername("mschneider");
+        marcusSchneider.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
+
+        erikaJohnston = company.createWorker("Erika Johnston",
+                new HashSet<>(Arrays.asList(mongoDB, spark, sql)), 90000.0);
+        erikaJohnston.setCompany(company);
+        erikaJohnston.setUsername("ejohnston");
+        erikaJohnston.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
+
+        jamieBurgess = company.createWorker("Jamie Burgess",
+                new HashSet<>(Arrays.asList(javaScript, python, tensorflow)), 150000.0);
+        jamieBurgess.setCompany(company);
+        jamieBurgess.setUsername("jburgess");
+        jamieBurgess.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
+        nickHubbard = company.createWorker("Nick Hubbard",
+                new HashSet<>(Arrays.asList(javaScript, react)), 110000.0);
+        nickHubbard.setCompany(company);
+        nickHubbard.setUsername("nhubbard");
+        nickHubbard.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
+
+        robertLambert = company.createWorker("Robert Lambert",
+                new HashSet<>(Arrays.asList(java, spark)), 180000.0);
+        robertLambert.setCompany(company);
+        robertLambert.setUsername("rlambert");
+        robertLambert.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
+
+        ronLogan = company.createWorker("Ron Logan",
+                new HashSet<>(Arrays.asList(java, spring, tensorflow)), 200000.0);
+        ronLogan.setCompany(company);
+        ronLogan.setUsername("rlogan");
+        ronLogan.setPassword(passwordEncoder.encode("12345678"));
+        
+        timConner = company.createWorker("Tim Conner",
+                new HashSet<>(Arrays.asList(java, python, sql)), 130000.0);
+        timConner.setCompany(company);
+        timConner.setUsername("tconner");
+        timConner.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
     
         omarWilliamson = company.createWorker("Omar Williamson",
                 new HashSet<>(Arrays.asList(cyberSecurity)), 200000.0);
-    
-        benjaminGuzman = company.createWorker("Benjamin Guzman",
-                new HashSet<>(Arrays.asList(java, spring, sql)), 150000.0);
-    
-        marcusSchneider = company.createWorker("Marcus Schneider",
-                new HashSet<>(Arrays.asList(javaScript, typeScript)), 145000.0);
-    
-        erikaJohnston = company.createWorker("Erika Johnston",
-                new HashSet<>(Arrays.asList(mongoDB, spark, sql)), 90000.0);
-    
-        jamieBurgess = company.createWorker("Jamie Burgess",
-                new HashSet<>(Arrays.asList(javaScript, python, tensorflow)), 150000.0);
-    
-        nickHubbard = company.createWorker("Nick Hubbard",
-                new HashSet<>(Arrays.asList(javaScript, react)), 110000.0);
-    
-        robertLambert = company.createWorker("Robert Lambert",
-                new HashSet<>(Arrays.asList(java, spark)), 180000.0);
-    
-        ronLogan = company.createWorker("Ron Logan",
-                new HashSet<>(Arrays.asList(java, spring, tensorflow)), 200000.0);
-    
-        timConner = company.createWorker("Tim Conner",
-                new HashSet<>(Arrays.asList(java, python, sql)), 130000.0);
-    }
+        omarWilliamson.setCompany(company);
+        omarWilliamson.setUsername("owilliamson");
+        omarWilliamson.setPassword(passwordEncoder.encode("12345678"));  // Encode the password
+        }
     
     private void assignWorkersToProjects() {
         // Assign workers to projects
